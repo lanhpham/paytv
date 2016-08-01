@@ -55,7 +55,7 @@ class myThread (threading.Thread):
         self.cond.notify()
         self.cond.release()
         score = pd.DataFrame(data = self.arr[0:,0:])
-        score.to_csv("/Users/sondinh/Downloads/bf_only_vectordays/score"+self.index + ".csv" ,index = False)
+        score.to_csv("/Users/sondinh/Downloads/bf_only_vectordays/score" + str(self.index) +  ".csv" ,index = False)
     def getResult(self):
         self.cond.acquire() # <--
         while not self.done: #  <--
@@ -65,21 +65,14 @@ class myThread (threading.Thread):
 start = timeit.default_timer()
 y = data_Churn.ix[:,1:29]
 arr = np.empty((0, len(y)), float)
-#range1 = range(5000)
-#range2 = range(5000, 10000)
-#range3 = range(10000, 15000)
-#range1 = range(2)
-#range2 = range(2,4)
+
+#length_data = range(1000)
 length_data = range(len(ActT5))
 data_split = np.array_split(length_data,100)
 
 threads = []
 for index, item in enumerate(data_split, start=0):
     threads.append(myThread(item, ActT5, y, index))
-#thread1 = myThread(range2, ActT5, y, 1)
-#threads.append(myThread(range1, ActT5, y, 1))
-#threads.append(myThread(range2, ActT5, y, 2))
-#threads.append(myThread(range3, ActT5, y, 2))
 
 arr_result = []
 # Start new Threads
