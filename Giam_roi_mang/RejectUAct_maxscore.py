@@ -16,7 +16,7 @@ def fc_maxscore (allfiles):
     for file in allfiles:
         df = pd.read_csv(file,index_col=None)
         df["maxscore"] = df.ix[:,:].max(axis =1)
-        df["meanscore"] = df.ix[:,0:10812].mean(axis =1)
+        df["meanscore"] = df.ix[:,:-1].mean(axis =1)
         df = df[["maxscore", "meanscore"]]
         if (len(result) ==0):
             result = df
