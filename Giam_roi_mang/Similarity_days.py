@@ -52,7 +52,7 @@ class myThread (threading.Thread):
 #        self.cond.notify()
 #        self.cond.release()
         score = pd.DataFrame(data = self.arr[0:,0:])
-        score.to_csv("/data/output_Lanh" + str(self.index) +  ".csv" ,index = False)
+        score.to_csv("/data/output_Lanh" + str(self.index) +  ".txt" ,index = False)
 start = timeit.default_timer()
 y = data_Churn.ix[:,1:29]
 arr = np.empty((0, len(y)), float)
