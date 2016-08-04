@@ -36,5 +36,6 @@ print "Finish"
 df_score = pd.read_csv("/data/output_Lanh/Final_score/max_meanscore.csv")
 data_t5 = pd.read_csv("/data/tv/bf_only_vectordays/t5.csv")
 data_ActT5 = data_t5[data_t5["Churn"] == False]
-data_merge = pd.merge(data_ActT5[["CustomerId"]],df_score[["maxscore","meanscore"]])
+a = data_ActT5[["CustomerId"]]
+data_merge = pd.merge(data_ActT5[["CustomerId"]], df_score,right_index= True, left_index = True)
     
