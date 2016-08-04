@@ -55,7 +55,7 @@ class myThread (threading.Thread):
         self.cond.notify()
         self.cond.release()
         score = pd.DataFrame(data = self.arr[0:,0:])
-        score.to_csv("/Users/sondinh/Downloads/bf_only_vectordays/score" + str(self.index) +  ".csv" ,index = False)
+        score.to_csv("/data/output_Lanh" + str(self.index) +  ".csv" ,index = False)
     def getResult(self):
         self.cond.acquire() # <--
         while not self.done: #  <--
@@ -74,18 +74,10 @@ threads = []
 for index, item in enumerate(data_split, start=0):
     threads.append(myThread(item, ActT5, y, index))
 
-arr_result = []
-# Start new Threads
 for t in threads:
     t.start()
 for t in threads:
     t.join()
-for t in threads:
-    arr_result.append(t.getResult())
-
-f = lambda x, y: np.concatenate((x, y), axis=0)
-result = reduce (f, arr_result )
-print(len(result))
 stop = timeit.default_timer()
         
 print stop - start
