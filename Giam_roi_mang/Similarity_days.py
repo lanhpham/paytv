@@ -37,31 +37,22 @@ class myThread (threading.Thread):
         self.my_range = my_range
         self.data = data
         self.y = y
-        #self.threadID = threadID
-        self.cond = threading.Condition()
-        self.done = False
+#        self.cond = threading.Condition()
+#        self.done = False
         self.index = index
         self.arr = np.empty((0, len(y)), float)
     def run(self):
-        self.cond.acquire()
-        #print self.threadID
         y = self.y
         for i in self.my_range:
             x =  self.data.ix[i,:]
             #print cosine_similarity(x,y)
             result = cosine_similarity(x,y)
             self.arr = np.append(self.arr, np.array(result), axis=0)
-        self.done = True
-        self.cond.notify()
-        self.cond.release()
+#        self.done = True
+#        self.cond.notify()
+#        self.cond.release()
         score = pd.DataFrame(data = self.arr[0:,0:])
         score.to_csv("/data/output_Lanh" + str(self.index) +  ".csv" ,index = False)
-    def getResult(self):
-        self.cond.acquire() # <--
-        while not self.done: #  <--
-            self.cond.wait()#  <--  We're waiting that self.done becomes True
-        self.cond.release() #  <--
-        return self.arr
 start = timeit.default_timer()
 y = data_Churn.ix[:,1:29]
 arr = np.empty((0, len(y)), float)
