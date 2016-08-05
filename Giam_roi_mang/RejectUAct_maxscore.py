@@ -20,14 +20,15 @@ def fc_maxscore (allfiles):
     result = []
     for file in allfiles:
         df = pd.read_csv(file,index_col=None, header = None)
-        df["maxscore"] = df.ix[:,:].max(axis =1)
-        df["meanscore"] = df.ix[:,:-1].mean(axis =1)
-        df = df[["maxscore", "meanscore"]]
+        df["maxscore"] = df.ix[:,:].max(axis = 1)
+        df["meanscore"] = df.ix[:,:-1].mean(axis = 1)
+        df["sumscore"] = df.ix[:,:-2].sum(axis =1)
+        df = df[["maxscore", "meanscore", "sumscore"]]
         if (len(result) ==0):
             result = df
         else:
             result = pd.concat([df, result], ignore_index = None)
-    result.to_csv("/data/output_Lanh/Final_score/" +"max_meanscore1"+ ".csv", index = False)
+    result.to_csv("/data/output_Lanh/Final_score/" +"max_mean_sum"+ ".csv", index = False)
 #%% 
 start = timeit.default_timer()        
 fc_maxscore(allFiles)
@@ -35,7 +36,7 @@ stop = timeit.default_timer()
 print stop- start
 print "Finish"
 #%%
-df_score = pd.read_csv("/data/output_Lanh/Final_score/max_meanscore.csv")
+df_score = pd.read_csv("/data/output_Lanh/Final_score/max_mean_sum.csv")
 data_t5 = pd.read_csv("/data/tv/bf_only_vectordays/t5.csv")
 data_ActT5 = data_t5[data_t5["Churn"] == False]
 #%% Merge score
@@ -67,6 +68,9 @@ data_Churn = pd.concat([Churn_meanscore.ix[:,0:-2],data_Churn],ignore_index = Tr
 data_days_meanscore = pd.concat([Active_meanscore.ix[:,0:-2], data_Churn], ignore_index = True)
 test_Churnmean = data_days_meanscore[data_days_meanscore["Churn"]== True]
 test_Activemean = data_days_meanscore[data_days_meanscore["Churn"]== False]
+#%% DATA_SUMSCORE
+
+
 #%% VISUALIZE
 # BEFORE SCORE
 col_fist = data_train_days.columns.values.tolist()[1:29]
