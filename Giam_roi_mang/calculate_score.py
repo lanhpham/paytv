@@ -4,11 +4,6 @@ import glob
 import timeit 
 import matplotlib.pyplot as plt
 import os
-import pandas as pd
-import glob
-import timeit 
-import matplotlib.pyplot as plt
-import os
 #import seaborn as sns
 #%%
 #define variable
@@ -36,7 +31,10 @@ def fc_maxscore (allfiles):
             df["sumscore"] = df.ix[:,:-2].sum(axis =1)
             result = df[["maxscore", "meanscore", "sumscore"]]
             # if file does not exist write header 
-            result.to_csv(output_path, mode = 'a',index = False)
+            if not os.path.isfile(output_path):
+                result.to_csv(output_path, header=["maxscore", "meanscore", "sumscore"], index = False)
+            else:
+                result.to_csv(output_path, mode = 'a',index = False)
     stop = timeit.default_timer()
     print count
     print stop - start
