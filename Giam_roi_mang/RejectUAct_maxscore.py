@@ -9,8 +9,6 @@ allFiles = glob.glob(path + "/*.txt")
 import matplotlib.pyplot as plt
 import seaborn as sns
 #%%
-#df1 = pd.read_csv("/data/output_Lanh/Group/result10.txt",header = None )
-#print df1.columns.values
 #df2 = pd.read_csv("/data/output_Lanh/Group/result9.txt",header = None )
 #df = pd.concat([df1, df2], ignore_index = None)
 #df1["maxscore"] = df1.ix[:,:].max(axis =1)
@@ -19,21 +17,30 @@ import seaborn as sns
 def fc_maxscore (allfiles):
     result = []
     for file in allfiles:
+        start = timeit.default_timer() 
+        tmp = start
         df = pd.read_csv(file,index_col=None, header = None)
+        print "load file " + str(timeit.default_timer()- start)
+        start = timeit.default_timer() 
         df["maxscore"] = df.ix[:,:].max(axis = 1)
         df["meanscore"] = df.ix[:,:-1].mean(axis = 1)
         df["sumscore"] = df.ix[:,:-2].sum(axis =1)
         df = df[["maxscore", "meanscore", "sumscore"]]
+        print "tinh toan" + str(timeit.default_timer()- start)
+        start = timeit.default_timer()
         if (len(result) ==0):
             result = df
         else:
             result = pd.concat([df, result], ignore_index = None)
-    result.to_csv("/data/output_Lanh/Final_score/" +"max_mean_sum"+ ".csv", index = False)
+        print "noi table" + str(timeit.default_timer()- start)
+        df = 0
+        print "total" + str(timeit.default_timer()- tmp)
+    result.to_csv("/data/output_Lanh/Final_score/" +"max_mean_sum00"+ ".csv", index = False)
 #%% 
-start = timeit.default_timer()        
+#start = timeit.default_timer()        
 fc_maxscore(allFiles)
-stop = timeit.default_timer()
-print stop- start
+#stop = timeit.default_timer()
+#print stop- start
 print "Finish"
 #%%
 df_score = pd.read_csv("/data/output_Lanh/Final_score/max_mean_sum.csv")
@@ -41,6 +48,7 @@ data_t5 = pd.read_csv("/data/tv/bf_only_vectordays/t5.csv")
 data_ActT5 = data_t5[data_t5["Churn"] == False]
 #%% Merge score
 data_mergeAct = pd.merge(data_ActT5, df_score,right_index= True, left_index = True)
+data_mergeAct.to_csv("/data/output_Lanh/Final_score/data_Actt5_score" + ".csv", index = False)
 #%% Data_Churn
 data_ChurnT5 = data_t5[data_t5["Churn"] == True]
 
@@ -52,7 +60,7 @@ data_ChurnT3 = data_t3[data_t3["Churn"] == True]
 
 data_Churn  = pd.concat([data_ChurnT5, data_ChurnT3, data_ChurnT4],ignore_index = True)
 #%%DATA_BEFORE SCORE
-data_train_days = pd.concat([data_ActT5, data_Churn], ignore_index = True)
+data_train_days = pd.concat([data_mergeActe, data_Churn], ignore_index = True)
 #%%DATA_MAXSCORE
 Active_maxscore = data_mergeAct[data_mergeAct["maxscore"] < 0.9]
 Churn_maxscore = data_mergeAct[data_mergeAct["maxscore"]>= 0.9]
@@ -104,4 +112,5 @@ sns.set(style='white')
 ax = sns.boxplot(data = data, x='Daily', y='Time', hue = "Churn", order=[str(i) for i in range(28)], orient = "v", palette = "Set2", fliersize=0)
 plt.legend(loc='upper center')
 plt.ylim(0, 70000)
+#%%
 
