@@ -6,16 +6,25 @@ import threading
 import timeit
 #%%
 data_t6 = pd.read_csv("/data/user/lanhpth/bf_only_vectordays/t6.csv")
-data_ActT6 = data_t6[data_t6["Churn"] == False]
-ActT6 = data_ActT6.ix[:,1:29]
+#data_t6.columns.values[1:29]
+data_t6["Sum"] = data_t6.ix[:,1:29].sum(axis = 1)
+data_t6 = data_t6[data_t6.ix[:,1:29].sum(axis = 1) > 0]
+#data_ActT6 = data_t6[data_t6["Churn"] == False]
+data_t6= data_t6.ix[:,1:29]
 #%%
 data_t5 = pd.read_csv("/data/user/lanhpth/bf_only_vectordays/t5.csv")
+data_t5["Sum"] = data_t5.ix[:,1:29].sum(axis = 1)
+data_t5 = data_t5[data_t5.ix[:,1:29].sum(axis = 1) > 0]
 data_ChurnT5 = data_t5[data_t5["Churn"] == True]
 
 data_t4 = pd.read_csv("/data/user/lanhpth/bf_only_vectordays/t4.csv")
+data_t4["Sum"] = data_t4.ix[:,1:29].sum(axis = 1)
+data_t4 = data_t4[data_t4.ix[:,1:29].sum(axis = 1) > 0]
 data_ChurnT4 = data_t4[data_t4["Churn"] == True]
 
 data_t3 = pd.read_csv("/data/user/lanhpth/bf_only_vectordays/t3.csv")
+data_t3["Sum"] = data_t3.ix[:,1:29].sum(axis = 1)
+data_t3 = data_t3[data_t3.ix[:,1:29].sum(axis = 1) > 0]
 data_ChurnT3 = data_t3[data_t3["Churn"] == True]
 
 data_Churn  = pd.concat([data_ChurnT5, data_ChurnT3, data_ChurnT4],ignore_index = True)
@@ -23,8 +32,6 @@ data_Churn  = pd.concat([data_ChurnT5, data_ChurnT3, data_ChurnT4],ignore_index 
 #data_train_days = pd.concat([data_ActT5, data_Churn], ignore_index = True)
 #data_train_days.to_csv("/data/tv/bf_only_vectordays/train_days.csv", index = False)
 #%%
-y = data_Churn.ix[:,1:29]
-arr = np.empty((0, len(y)), float)
 #%%
 #for i in range(len(ActT5)):
 #    x =  ActT5.ix[i:i,:]cd --
@@ -59,12 +66,12 @@ y = data_Churn.ix[:,1:29]
 arr = np.empty((0, len(y)), float)
 
 #length_data = range(1000)
-length_data = range(len(ActT6))
+length_data = range(len(data_t6))
 data_split = np.array_split(length_data,100)
 
 threads = []
 for index, item in enumerate(data_split, start=0):
-    threads.append(myThread(item, ActT6, y, index))
+    threads.append(myThread(item, data_t6, y, index))
 
 for t in threads:
     t.start()
