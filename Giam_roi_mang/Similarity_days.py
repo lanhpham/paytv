@@ -5,6 +5,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 import threading
 import timeit
 #%%
+out_path = "/data/user/lanhpth/output_lanh/result_thread" 
 data_t6 = pd.read_csv("/data/tv/bf_only_vectordays/t6.csv")
 #data_t6.columns.values[1:29]
 data_t6["Sum"] = data_t6.ix[:,1:29].sum(axis = 1)
@@ -29,21 +30,21 @@ data_Churn  = pd.concat([data_ChurnT5, data_ChurnT3, data_ChurnT4],ignore_index 
 #data_train_days = pd.concat([data_ActT5, data_Churn], ignore_index = True)
 #data_train_days.to_csv("/data/tv/bf_only_vectordays/train_days.csv", index = False)
 #%%
-y = data_Churn.ix[:,1:29]
-data_t6.reset_index(inplace = True)   
-data_t6.drop('index',axis=1,inplace=True) 
-arr = np.empty((0, len(y)), float)
-for i in range(10):
-    x =  data_t6.ix[i:i,:]
-    result = cosine_similarity(x,y)
-    arr = np.append(arr, np.array(result), axis=0)
+#y = data_Churn.ix[:,1:29]
+#data_t6.reset_index(inplace = True)   
+#data_t6.drop('index',axis=1,inplace=True) 
+#arr = np.empty((0, len(y)), float)
+#for i in range(10):
+#    x =  data_t6.ix[i:i,:]
+#    result = cosine_similarity(x,y)
+#    arr = np.append(arr, np.array(result), axis=0)
 #%%
 #y = data_Churn.ix[:,1:29]
 #arr = np.array([], float)
 #for i in range(100):
 #    x =  data_t6.ix[i:i,:]
 #    result = cosine_similarity(x,y)
-#    arr = np.append(arr, np.array(result), axis=0)
+#    result.to_csv("/data/tv/output_lanh/result_thread" + ".txt",mode = 'a', index = False)
 
 #%%
 class myThread (threading.Thread):
@@ -55,19 +56,20 @@ class myThread (threading.Thread):
 #        self.cond = threading.Condition()
 #        self.done = False
         self.index = index
-        self.arr = np.empty((0, len(y)), float)
+        #self.arr = np.empty((0, len(y)), float)
     def run(self):
         y = self.y
         for i in self.my_range:
             x =  self.data.ix[i:i,:]
             #print cosine_similarity(x,y)
             result = cosine_similarity(x,y)
-            self.arr = np.append(self.arr, np.array(result), axis=0)
+            result.to_csv(out_path + str(self.index) + ".txt", mode = "a", index = False)
+            #self.arr = np.append(self.arr, np.array(result), axis=0)
 #        self.done = True
 #        self.cond.notify()
 #        self.cond.release()
-        score = pd.DataFrame(data = self.arr[0:,0:])
-        score.to_csv("/data/user/lanhpth/output_lanh/result_thread" + str(self.index) +  ".txt" ,index = False)
+        #score = pd.DataFrame(data = self.arr[0:,0:])
+        #score.to_csv("/data/user/lanhpth/output_lanh/result_thread" + str(self.index) +  ".txt" ,index = False)
 start = timeit.default_timer()
 y = data_Churn.ix[:,1:29]
 arr = np.empty((0, len(y)), float)
