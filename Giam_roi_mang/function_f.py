@@ -4,7 +4,7 @@ from fastdtw import fastdtw
 import pandas as pd
 import matplotlib.pyplot as plt
 #%%
-x = np.array(arr[[1,1], [2,2], [3,3], [4,4], [5,5]])
+x = np.array([[1,1], [2,2], [3,3], [4,4], [5,5]])
 y = np.array([[-1,-1], [-2,-2], [-3,-3], [-4,-4], [-5,-5]])
 distance, path = fastdtw(x, y, dist= euclidean)
 print distance
@@ -29,5 +29,5 @@ for i in range(len(dayAct_clus)):
         y = pd.concat([dayAct_clus["time"],dayAct_clus[j]], axis =1)
         y = np.array(y)
         distance, path = fastdtw(x, y, dist= cosine)
-        result.append(distance)
+        result= np.append(result,distance, axis = 0)
 #%%  
