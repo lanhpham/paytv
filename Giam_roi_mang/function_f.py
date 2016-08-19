@@ -8,7 +8,6 @@ x = np.array([[1,1], [2,2], [3,3], [4,4], [5,5]])
 y = np.array([[-1,-1], [-2,-2], [-3,-3], [-4,-4], [-5,-5]])
 distance, path = fastdtw(x, y, dist= euclidean)
 print distance
-print path/home/honglanh/workspace/data/tv/t3.csv
 #%%
 Churn_clus_1 = pd.read_csv("/data/tv/Cluster_Cosine/T6_Clu6/trainChurn_1.csv")
 Act_clus_1 = pd.read_csv("/data/tv/Cluster_Cosine/Train_Active/trainActive_1.csv")
