@@ -27,26 +27,24 @@ class myThread (threading.Thread):
         self.index = index
         self.r = r
     def run(self):
-        result = np.empty(shape = [len(self.my_range), len(self.data)])
+        result = np.empty((0, len(self.data)), float)
         for i in self.my_range:
-             s1= self.data.ix[i,:]
-             temp = np.empty(shape = [len(self.my_range), len(self.data)])
-             for j in range(len(self.data)):
-                 s2 = self.data.ix[j,:]
-                 LB_sum=0
-                 for ind,k in enumerate(s1):
-        
+            s1= self.data.ix[i,:]
+            temp = np.empty(shape = [1, len(self.data)])
+            for j in range(len(self.data)):
+                s2 = self.data.ix[j,:]
+                LB_sum=0
+                for ind,k in enumerate(s1):
                     lower_bound=min(s2[(ind-self.r if ind-self.r >=0 else 0):(ind+self.r)])
                     upper_bound=max(s2[(ind-self.r if ind-self.r>=0 else 0):(ind+self.r)])
-        
                     if k>upper_bound:
                         LB_sum=LB_sum+(k-upper_bound)**2
                     elif k<lower_bound:
                         LB_sum=LB_sum+(k-lower_bound)**2
-             temp[0,j] = sqrt(LB_sum)
-             result = np.append(result, np.array(temp), axis=0)
+                temp[0,j] = sqrt(LB_sum)
+            result = np.append(result, np.array(temp), axis=0)
         score = pd.DataFrame(data = result)
-        score.to_csv(out_path +str(self.index).zfill(3) + "thread.txt", mode = "a", header = None, index = False)
+        score.to_csv(out_path +str(self.index).zfill(3) + "thread.txt", header = None, index = False)
 #%%
 start = timeit.default_timer()
 
