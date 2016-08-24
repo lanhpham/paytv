@@ -4,15 +4,12 @@ from fastdtw import fastdtw
 import pandas as pd
 import matplotlib.pyplot as plt
 import timeit
+from fastdtw import fastdtw
+from scipy.spatial.distance import *
 import threading
 #%%
-#x = np.array([[1,1], [2,2], [3,3], [4,4], [5,5]])
-#y = np.array([[2,2], [3,3], [4,4],[5,5]])
-#distance, path = fastdtw(x, y, dist= cosine)
-#print distance
-#%%
 path = "/data/tv/bf_only_vectordays/"
-out_path = "/data/tv/out_put_Lanh/"
+out_path = "/data/tv/out_put_Lanh/fastdtw/"
 data_t5 = pd.read_csv(path+"t5_fillter.csv")
 data_ChurnT5 = data_t5[data_t5["Churn"] == True]
 
@@ -26,7 +23,6 @@ data_Churn  = pd.concat([data_ChurnT5, data_ChurnT3, data_ChurnT4],ignore_index 
 #%%
 data_Churn_new = data_Churn.ix[:,1:-1]
 data_Churn_new = data_Churn_new.T
-data_Churn_new['time'] = [int(i) for i in range(1,29)]
 #%%
 #start = timeit.default_timer()
 #for i in range(len(data_Churn)-1):
@@ -45,33 +41,36 @@ data_Churn_new['time'] = [int(i) for i in range(1,29)]
 #print "FINISH"
 #%%
 class myThread (threading.Thread):
-    def __init__(self, my_range, data, index):
+    def __init__(self, my_range, data, len_data, index):
         threading.Thread.__init__(self)
         self.my_range = my_range
         self.data = data
-#        self.cond = threading.Condition()
-#        self.done = False
+        self.len_data = len_data
         self.index = index
-#        self.arr = np.empty((0, len(y)), float)
+
     def run(self):
+        result = np.empty((0, self.len_data), float)
         for i in self.my_range:
-            x =  pd.concat([self.data["time"],self.data[i]], axis =1)
+            x = pd.concat([pd.DataFrame(range(1,len(self.data)+1)),self.data.ix[:,i]], axis =1)
             x = np.array(x)
-            for j in self.my_range:
-                y = pd.concat([self.data["time"],self.data[j]], axis =1)
+            
+            temp = np.empty(shape = [1, self.len_data])
+            for j in range(self.len_data):
+                y = pd.concat([pd.DataFrame(range(1,len(self.data)+1)),self.data.ix[:,i]], axis =1)
                 y = np.array(y)
-                distance, path = fastdtw(x, y, dist= euclidean)
-                result = distance
-                score = pd.DataFrame(data = result[0:,0:])
-                score.to_csv(out_path +str(self.index).zfill(3) + "thread.txt", mode = "a", header = None, index = False)
+                distance = fastdtw(x, y, dist= cosine)
+                temp[0,j] = distance
+            result = np.append(result, np.array(temp), axis=0)
+        score = pd.DataFrame(data = result)
+        score.to_csv(out_path +str(self.index).zfill(3) + "thread.txt", header = None, index = False)
 #%%
 start = timeit.default_timer()
-length_data = range(len(data_Churn_new))
+length_data = range(10)
 data_split = np.array_split(length_data,10)
 
 threads = []
 for index, item in enumerate(data_split, start=0):
-    threads.append(myThread(item, data_Churn_new, index))
+    threads.append(myThread(item, data_Churn_new, len(data_Churn),index))
 
 for t in threads:
     t.start()
@@ -81,9 +80,9 @@ stop = timeit.default_timer()
         
 print stop - start
 print "Exiting Main Thread"
-                #%%
-plt.plot(data_Churn_new.ix[:,8], 'b--')
-plt.show()
+#%%
+#plt.plot(data_Churn_new.ix[:,8], 'b--')
+#plt.show()
 #dayChurn_clus = Churn_clus_1.ix[:,1:-2]
 #dayChurn_clus = dayChurn_clus.T
 #dayChurn_clus['time'] = [int(i) for i in range(28)]
