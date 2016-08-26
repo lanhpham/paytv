@@ -14,14 +14,16 @@ class myThread (multiprocessing.Process):
         self.index = index
     def run(self):
         result = np.empty(shape = [len(self.my_range), len(self.data)])
+        row = 0
         for i in self.my_range:
             x =  self.data.ix[i,:]
             x = np.array(x).reshape(1,-1)
-            for j in range(len(self.data)+1):
+            for j in range(len(self.data)):
                 y =  self.data.ix[j,:]
-                y = np.array(x).reshape(1,-1)
+                y = np.array(y).reshape(1,-1)
                 distance = dtw(x, y,dist= cosine)[0]
-                result[i,j] = distance
+                result[row,j] = distance
+            row = row + 1
         score = pd.DataFrame(data = result)
         score.to_csv(out_path +str(self.index).zfill(3) + "thread.txt", header = None, index = False)
 if __name__ == '__main__':   
