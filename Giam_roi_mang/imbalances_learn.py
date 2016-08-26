@@ -8,15 +8,16 @@ out_path = "/data/tv/out_put_Lanh/"
 data_Churn = pd.read_csv("/data/tv/Cluster_Cosine/T6_Clu6/trainChurn_0.csv")
 data_Churn = data_Churn.ix[:,1:-2]
 #%%
+result = np.empty((2, len(data_Churn)))
 for j in range(2):
-temp = np.empty(shape = [1, len(data_Churn)])
-x = data_Churn.ix[0,:]
-x = np.array(x).reshape(1,-1)
-for i in range(len(data_Churn)):
-    y = np.array(data_Churn.ix[i,:]).reshape(1,-1)
-    distance = dtw(x, y,dist= cosine)[0]
-    temp[0,i] = distance
-
+    temp = np.empty(shape = [1, len(data_Churn)])
+    x = data_Churn.ix[j,:]
+    x = np.array(x).reshape(1,-1)
+    for i in range(len(data_Churn)):
+        y = np.array(data_Churn.ix[i,:]).reshape(1,-1)
+        distance = dtw(x, y,dist= cosine)[0]
+        temp[0,i] = distance
+result = np.append(result, np.array(temp), axis=1)
 #%%
 class myThread (threading.Thread):
     def __init__(self, my_range, data, index):
