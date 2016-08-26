@@ -32,7 +32,7 @@ class myThread (multiprocessing.Process):
             x =  self.data.ix[i,:]
             x = np.array(x).reshape(1,-1)
             for j in range(len(self.data)+1):
-                y =  self.data.ix[i,:]
+                y =  self.data.ix[j,:]
                 y = np.array(x).reshape(1,-1)
                 distance = dtw(x, y,dist= cosine)[0]
                 result[i,j] = distance
